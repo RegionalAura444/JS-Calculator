@@ -63,7 +63,7 @@ button{
     
 }
 .calc-grid > button:focus{
-    background-color:rgba(99, 102, 241);
+    background-color:rgb(185, 28, 28);
     transform:scale(0.9)
 }
 
