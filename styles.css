@@ -60,7 +60,11 @@ button{
 }
 .calc-grid > button:hover{
     background-color: rgba(0, 0, 0, 0.9);
-    color:#fff;
+    
+}
+.calc-grid > button:focus{
+    background-color:rgba(99, 102, 241);
+    transform:scale(0.9)
 }
 
 .calc-grid .allclear{
