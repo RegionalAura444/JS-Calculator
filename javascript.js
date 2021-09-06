@@ -41,35 +41,137 @@ const numberElArray = [
     number5El, number6El, number7El, number8El, number9El
 ];
 
+// Memory variables
+let valueStrInMem =null;
+let operatorInMem =null;
 
-///////////////////////
-////// Functions //////
-///////////////////////
+///////////////////////////////
+////// General Functions //////
+///////////////////////////////
 
-//This Functions places a comma and concatenates the number if its more than 9,999
-const getValueAsStr = () => {
-    const currentDisplayStr = displayElement.textContent;
-    return currentDisplayStr.split(',').join('');
+const getValueAsStr =() => {
+    const currentValueStr = displayElement.textContent;
+    return currentValueStr.split(',').join('');
+}
+const getValueAsNum = ()=>{
+    return parseFloat(getValueAsStr())
 }
 
-const getValueAsNum = () => {
-    return parseFloat(getValueAsStr());
+const setStrAsValue = (valueStr) => {
+    if(valueStr[valueStr.length -1]=== '.'){
+        displayElement.textContent += '.';
+        return;
+    }
+
+    const [wholeNumStr, decimalStr] = valueStr.split('.');
+    //console.log(wholeNumStr, decimalStr)
+    if(decimalStr){
+        displayElement.textContent = parseFloat(wholeNumStr).toLocaleString() + '.' + decimalStr;
+    } else {
+        displayElement.textContent = parseFloat(wholeNumStr).toLocaleString();
+    } 
 };
 
-const setStrAsValue  = (valueStr) => {
-    displayElement.textContent = parseFloat(valueStr).toLocaleString();
+const handleNumberClick =(numStr) => {
+    const currentValueStr = getValueAsStr() ;
+    if(currentValueStr === '0') {
+        setStrAsValue(numStr);
+    } else {
+      setStrAsValue(currentValueStr + numStr);
+    }
 };
 
-const handleNumberClick =  (numStr) => {
-  //  console.log(numStr)
-  const currentDisplayStr = getValueAsStr();
-  if( currentDisplayStr === '0'){
-      setStrAsValue(numStr);
-  } else{
-      setStrAsValue(currentValueSt + numStr);
-  }
+const handleOperatorClick = (operation) =>{
+    const currentValueStr = getValueAsStr();
+    const currentValueNum = getValueAsNum();
+
+    if(!valueStrInMem){
+        valueStrInMem = currentValueStr;
+        operatorInMem = operation ;
+        setStrAsValue('0');
+        return;
+    }
+    
+    const valueNumInMem = parseFloat(valueStrInMem);
+    let newValueNum;
+    if(operatorInMem === 'addition') {
+        newvalueNum = valueNumInMem + currentValueNum;
+    } else if(operatorInMem === 'subtraction') {
+        newvalueNum = valueNumInMem - currentValueNum;
+    } else if(operatorInMem === 'multiplication') {
+        newvalueNum = valueNumInMem * currentValueNum;
+    } else if(operatorInMem === 'division') {
+        newvalueNum = valueNumInMem / currentValueNum;
+    }
+
+    valueStrInMem = newValueNum.toString();
+    operatorInMem = operation;
+    setStrAsValue("0");
 };
 
+
+//////////////////////////////////////////////////////
+//////// Event Listeners to Function Buttons /////////
+//////////////////////////////////////////////////////
+
+acEl.addEventListener('click',() => {
+    setStrAsValue('0');
+    valueStrInMem =null;
+    operatorInMem =null;
+});
+
+pmEl.addEventListener('click', () => {
+     const currentValueNum = getValueAsNum();
+     const currentValueStr = getValueAsStr();
+
+     if (currentValueStr === '-0') {
+         setStrAsValue('0');
+         return;
+     }
+
+     if (currentValueNum > 0) {
+         setStrAsValue('-' + currentValueStr);
+     } else {
+        setStrAsValue( currentValueStr.substring(1));
+     }
+});
+
+//  percentEl.addEventListener('click', () =>{
+//      const currentValueNum = getValueAsNum();
+//      const newValueNum = currentValueNum /100;
+//      setStrAsValue(newValueNum.toString());
+//      valueStrInMem =null;
+//      operatorInMem =null;
+//  });
+
+
+
+//////////////////////////////////////////////////////
+//////// Event Listeners to Operator Buttons /////////
+//////////////////////////////////////////////////////
+
+additionEl.addEventListener('click', () => {
+    handleOperatorClick('addition');
+});
+
+subtractionEl.addEventListener('click', () => {
+    handleOperatorClick('subtraction');
+});
+
+multiplicationEl.addEventListener('click', () => {
+    handleOperatorClick('multiplication');
+});
+
+divisionEl.addEventListener('click', () => {
+    handleOperatorClick('division');
+});
+
+
+equalEl.addEventListener('click', () => {
+    if(!valueStrInMem){
+
+    } 
+});
 
 //////////////////////////////////////////////////////
 ////// Event Listeners for Buttons and Decimal ///////
@@ -88,7 +190,7 @@ decimalEl.addEventListener('click', () =>{
 
     // Makes sure that you can NOT add more than one decimal point
     if(!currentValueStr.includes('.')) {
-        setStrAsValue( currentValueStr + '.')
+        setStrAsValue( currentValueStr + '.');
     }
 });
 
